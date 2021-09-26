@@ -21,7 +21,7 @@ class BlobDetection(GrassFireMethod):
     def __init__(self, matrix, fireMethod: str):
         super().__init__(matrix, Blob, fireMethod)
 
-    def condition(self, Blob, grass: int) -> bool: return 200 < grass
+    def condition(self, Blob, grass: int) -> bool: return 255 <= grass
 
     def handle(self, blob: Blob, grass, x: int, y: int):
         blob.x = min(x, blob.x)
@@ -61,15 +61,16 @@ def mergeBlobs(blobs):
 
 
 def drawRectangle(blobs, originalFrame, animate):
+    detectedImage = originalFrame.copy()
     for blob in blobs:
         position = (blob.x, blob.y)
         dimension = (blob.x + blob.w, blob.y + blob.h)
         color = (0, 0, 255)
-        detectedImage = cv2.rectangle(originalFrame.copy(), position, dimension, color, 1)
+        detectedImage = cv2.rectangle(detectedImage, position, dimension, color, 1)
         if animate:
             cv2.imshow('Show', detectedImage)
             cv2.waitKey(5)
-        return detectedImage
+    return detectedImage
 
 
 def colorMask(img: np.ndarray, offset: float, lower: tuple, upper: tuple) -> np.ndarray:
@@ -118,13 +119,13 @@ def colorDetection(originalFrame: np.ndarray, blurLevel: int, offset: [int], low
     for blob in blobs:
         blob.type = type
 
-    drawRectangle(blobs, originalFrame, False)
+    imageProcess = drawRectangle(blobs, originalFrame, False)
 
-    cv2.imshow('Find ' + type, originalFrame)
+    cv2.imshow('Find ' + type, imageProcess)
     cv2.waitKey(0)
     return blobs
 
 
-# colorDetection(cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (100, 154, 28), (158, 255, 215), 'Water')
-colorDetection(cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (40, 0, 104), (72, 255, 212), 'Grass')
+colorDetection(cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (100, 154, 28), (158, 255, 215), 'Water')
+#colorDetection(cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (40, 0, 104), (72, 255, 212), 'Grass')
 #colorDetection(cv2.imread('TestImages/Gloves1.png'), 9, (0, 0, 0), (48, 30, 104), (78, 122, 255), 'greenGlove')
