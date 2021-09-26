@@ -11,7 +11,8 @@ class Blob(Area):
         self.y = y
         self.w = 0
         self.h = 0
-        Blob.blobThreshold = 15
+        Blob.blobThreshold = 1
+        Blob.sizeFilter = 20
 
     def setThreshold(blobThreshold):
         Blob.blobThreshold = blobThreshold
@@ -21,7 +22,7 @@ class BlobDetection(GrassFireMethod):
     def __init__(self, matrix, fireMethod: str):
         super().__init__(matrix, Blob, fireMethod)
 
-    def condition(self, Blob, grass: int) -> bool: return 255 <= grass
+    def condition(self, Blob, grass: int) -> bool: return 200 < grass
 
     def handle(self, blob: Blob, grass, x: int, y: int):
         blob.x = min(x, blob.x)
@@ -60,8 +61,8 @@ def mergeBlobs(blobs):
     return blobs
 
 
-def drawRectangle(blobs, originalFrame, animate):
-    detectedImage = originalFrame.copy()
+def drawRectangle(blobs, frame, animate):
+    detectedImage = frame.copy()
     for blob in blobs:
         position = (blob.x, blob.y)
         dimension = (blob.x + blob.w, blob.y + blob.h)
@@ -109,12 +110,12 @@ def colorDetection(originalFrame: np.ndarray, blurLevel: int, offset: [int], low
     # Blob detect image
     blobs = BlobDetection(imageProcess, '0').getAreas()
 
+    if 1 < len(blobs): blobs = mergeBlobs(blobs)
+
     # Remove to small blobs
     for blob in list(blobs):
-        if blob.w < Blob.blobThreshold or blob.h < Blob.blobThreshold:
-            blobs.remove(blob)
-
-    if 1 < len(blobs): blobs = mergeBlobs(blobs)
+        if blob.w < Blob.sizeFilter or blob.h < Blob.sizeFilter:
+           blobs.remove(blob)
 
     for blob in blobs:
         blob.type = type
@@ -126,6 +127,8 @@ def colorDetection(originalFrame: np.ndarray, blurLevel: int, offset: [int], low
     return blobs
 
 
-colorDetection(cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (100, 154, 28), (158, 255, 215), 'Water')
-#colorDetection(cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (40, 0, 104), (72, 255, 212), 'Grass')
+#colorDetection(cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (100, 154, 28), (158, 255, 215), 'Water')
+colorDetection(cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (40, 0, 104), (72, 255, 212), 'Grass')
+#colorDetection(cv2.imread('TestImages/KingDomino1.jpg'), 9, (10, 0, 0), (43, 52, 12), (95, 238, 97), 'Forest')
+#colorDetection(cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (24, 68, 95), (36, 139, 171), 'Dirt')
 #colorDetection(cv2.imread('TestImages/Gloves1.png'), 9, (0, 0, 0), (48, 30, 104), (78, 122, 255), 'greenGlove')
