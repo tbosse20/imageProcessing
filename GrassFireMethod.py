@@ -23,7 +23,7 @@ class GrassFireMethod(ABC):
 
     def grassFire(self, grass, y, x, area, row):
         # Handle the area and single grass. Method made in subclass
-        area, grass = self.handleGrass(area, grass, x, y)
+        area, grass = self.handle(area, grass, x, y)
 
         # Iterate all grass next to
         for i in range(-1, 2):
