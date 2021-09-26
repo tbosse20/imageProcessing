@@ -125,6 +125,12 @@ def colorDetection(originalFrame: np.ndarray, blurLevel: int, offset: [int], low
     return blobs
 
 
+<<<<<<< HEAD
 # colorDetection(cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (100, 154, 28), (158, 255, 215), 'Water')
 colorDetection(cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (40, 0, 104), (72, 255, 212), 'Grass')
 #colorDetection(cv2.imread('TestImages/Gloves1.png'), 9, (0, 0, 0), (48, 30, 104), (78, 122, 255), 'greenGlove')
+=======
+# colorDetection(cv2.imread('KingDomino1.jpg'), 9, (0, 0, 0), (100, 154, 28), (158, 255, 215), 'Water')
+#colorDetection(cv2.imread('KingDomino1.jpg'), 9, (0, 0, 0), (40, 0, 104), (72, 255, 212), 'Grass')
+colorDetection(cv2.imread('Gloves1.png'), 9, (0, 0, 0), (40, 0, 104), (72, 255, 212), 'Grass')
+>>>>>>> e9a0fd70b70a4b88772fe757dd8fcc0b3e799563
