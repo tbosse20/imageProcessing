@@ -87,7 +87,8 @@ def colorMask(img: np.ndarray, offset: float, lower: tuple, upper: tuple) -> np.
     return maskedImg
 
 
-def colorDetection(format: str, originalFrame: np.ndarray, blurLevel: int, offset: [int], lower: [int], upper: [int], type: str,
+def colorDetection(format: str, originalFrame: np.ndarray, blurLevel: int, offset: [int], lower: [int], upper: [int],
+                   type: str,
                    lowerRes: int) -> [Blob]:
     # originalFrame = cv2.imread("", cv2.IMREAD_UNCHANGED)
     height, width, channels = originalFrame.shape
@@ -142,8 +143,54 @@ def colorDetection(format: str, originalFrame: np.ndarray, blurLevel: int, offse
         cv2.imshow('Find ' + type, imageProcess)
         cv2.waitKey(0)
 
-def videoTest():
 
+def videoTestNewMethod(image, window_name, lowerThresh, upperThresh):
+    # Read image
+    originalImage = image.copy()
+    image = colorMask(image, (0, 0, 0), (48, 30, 104), (78, 122, 255))
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    (thresh, image) = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    image = cv2.bitwise_not(image)
+    #image = cv2.Canny(image, 100, 200) # Edge
+    cv2.imshow('Processed image', image)
+    # Set up the detector with default parameters.
+    # Initialize parameter settiing using cv2.SimpleBlobDetector
+
+    # Set our filtering parameters
+    # Initialize parameter settiing using cv2.SimpleBlobDetector
+
+    params = cv2.SimpleBlobDetector_Params()
+
+    params.filterByColor = False
+    params.minThreshold = 10
+    params.maxThreshold = 30
+    params.blobColor = 0
+    params.minArea = 100
+    params.maxArea = 500000
+    params.filterByCircularity = False
+    params.filterByConvexity = False
+    params.minCircularity = 100
+    params.maxCircularity = 1000
+
+    # Create a detector with the parameters
+    detector = cv2.SimpleBlobDetector_create(params)
+
+    # Detect blobs
+    keypoints = detector.detect(image)
+
+    # print(len(keypoints))
+    # Draw blobs on our image as red circles
+    blank = np.zeros((1, 1))
+    blobs = cv2.drawKeypoints(originalImage, keypoints, blank, (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+
+    number_of_blobs = len(keypoints)
+    text = "Number of Circular Blobs: " + str(len(keypoints))
+    cv2.putText(blobs, text, (20, 550), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 100, 255), 2)
+
+    return blobs
+
+
+def videoTest():
     cap = cv2.VideoCapture('TestImages/greensmall.mp4')
 
     frameCount = 0
@@ -154,14 +201,18 @@ def videoTest():
         frame = cv2.resize(frame, (360, 640))
 
         frameCount += 1
-        if frameCount % 5 == 0:
-            blurLevel = 9
-            offset = (10, 0, 0)
-            lower = (48, 30, 104)
-            upper = (78, 122, 255)
-            type = 'greenGlove'
-            lowerRes = 2
-            frame = colorDetection('video', frame, blurLevel, offset, lower, upper, type, lowerRes)
+
+        # if frameCount % 5 == 0:
+        """
+        blurLevel = 9
+        offset = (10, 0, 0)
+        lower = (48, 30, 104)
+        upper = (78, 122, 255)
+        type = 'greenGlove'
+        lowerRes = 2
+        frame = colorDetection('video', frame, blurLevel, offset, lower, upper, type, lowerRes)
+        """
+        frame = videoTestNewMethod(frame, 'Window', 0, 0)
 
         # Display the resulting frame
         cv2.imshow('frame', frame)
@@ -174,9 +225,37 @@ def videoTest():
 
     cv2.destroyAllWindows()
 
-colorDetection('pic', cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (100, 154, 28), (158, 255, 215), 'Water', 1)
-#colorDetection('pic', cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (40, 0, 104), (72, 255, 212), 'Grass', 1)
-#colorDetection('pic', cv2.imread('TestImages/KingDomino1.jpg'), 9, (10, 0, 0), (43, 52, 12), (95, 238, 97), 'Forest', 1)
-#colorDetection('pic', cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (24, 68, 95), (36, 139, 171), 'Dirt', 1)
-#colorDetection('pic', cv2.imread('TestImages/Gloves1.png'), 9, (0, 0, 0), (48, 30, 104), (78, 122, 255), 'greenGlove', 1)
-#videoTest()
+
+def testImage(window_name, lowerThresh, upperThresh):
+    image = cv2.imread("TestImages/Gloves1.png")
+    image = videoTestNewMethod(image, window_name, lowerThresh, upperThresh)
+
+    # Show image
+    cv2.imshow(window_name, image)
+    cv2.waitKey(1)
+
+def nothing(value):
+    pass
+
+window_name = 'test'
+cv2.namedWindow(window_name)
+cv2.createTrackbar('Lower threshold', window_name, 1, 255, nothing)
+cv2.createTrackbar('Upper threshold', window_name, 1, 255, nothing)
+
+videoTest()
+#while True:
+
+# Getting input from sliders
+lowerThresh = cv2.getTrackbarPos('Lower threshold', window_name)
+upperThresh = cv2.getTrackbarPos('Upper threshold', window_name)
+
+# colorDetection('pic', cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (100, 154, 28), (158, 255, 215), 'Water', 1)
+# colorDetection('pic', cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (40, 0, 104), (72, 255, 212), 'Grass', 1)
+# colorDetection('pic', cv2.imread('TestImages/KingDomino1.jpg'), 9, (10, 0, 0), (43, 52, 12), (95, 238, 97), 'Forest', 1)
+# colorDetection('pic', cv2.imread('TestImages/KingDomino1.jpg'), 9, (0, 0, 0), (24, 68, 95), (36, 139, 171), 'Dirt', 1)
+# colorDetection('pic', cv2.imread('TestImages/Gloves1.png'), 9, (0, 0, 0), (48, 30, 104), (78, 122, 255), 'greenGlove', 1)
+
+#testImage(window_name, lowerThresh, upperThresh)
+
+
+
