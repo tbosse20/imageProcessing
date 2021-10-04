@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 from BlobDetection import blobDetection
-from SimpleBlobDetector import SimpleBlobDetector
-
+from SimpleBlobDetector import SimpleBlobDetector, processImage
+from connectedComponentsMethod import connectedComponentsMethod
 
 def videoTest():
     cap = cv2.VideoCapture('TestImages/greensmall.mp4')
@@ -25,9 +25,9 @@ def videoTest():
 
         # Pick which blob detector method to use
         # blobDetection(frame, blurLevel, lower, upper, type, lowerRes)
-        SimpleBlobDetector(frame, lower, upper)
-
-        # Display the resulting frame
+        processedImage = processImage(frame, lower, upper)
+        SimpleBlobDetector(frame, processedImage)
+        connectedComponentsMethod(frame, processedImage)
 
         if cv2.waitKey(15) & 0xFF == ord('q'):
             break
