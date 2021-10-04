@@ -24,8 +24,8 @@ def videoTest():
         lowerRes = 2
 
         # Pick which blob detector method to use
-        # blobDetection('video', frame, blurLevel, lower, upper, type, lowerRes)
-        SimpleBlobDetector(frame, 'Window', lower, upper)
+        # blobDetection(frame, blurLevel, lower, upper, type, lowerRes)
+        SimpleBlobDetector(frame, lower, upper)
 
         # Display the resulting frame
 

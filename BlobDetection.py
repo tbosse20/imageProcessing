@@ -3,6 +3,7 @@ import cv2
 from ColorMask import colorMask
 import numpy as np
 
+
 class Blob(Area):
     def __init__(self, grass, x: int, y: int):
         super().__init__()
@@ -21,7 +22,8 @@ class BlobDetection(GrassFireMethod):
     def __init__(self, matrix, fireMethod: str):
         super().__init__(matrix, Blob, fireMethod)
 
-    def condition(self, Blob, grass: int) -> bool: return 200 < grass
+    def condition(self, Blob, grass: int) -> bool:
+        return 200 < grass
 
     def handle(self, blob: Blob, grass, x: int, y: int):
         blob.x = min(x, blob.x)
@@ -59,9 +61,8 @@ def checkOverLap(obj1, obj2) -> bool:
     return False
 
 
-def blobDetection(format: str, originalFrame: np.ndarray, blurLevel: int, lower: [int], upper: [int],
-                   type: str,
-                   lowerRes: int) -> [Blob]:
+def blobDetection(originalFrame: np.ndarray, blurLevel: int, lower: [int], upper: [int], type: str, lowerRes: int) -> [
+    Blob]:
     # originalFrame = cv2.imread("", cv2.IMREAD_UNCHANGED)
     height, width, channels = originalFrame.shape
 
