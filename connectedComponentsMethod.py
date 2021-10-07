@@ -1,10 +1,19 @@
 import cv2
 import numpy as np
 import imageProcessing.ProcessImage
+from imageProcessing.ColorMask import colorMask
 
-def connectedComponentsMethod(originalImage, blur: int, lower, upper, type: str):
+def connectedComponentsMethod(originalImage, blur: int, type: str):
+    colorMasked = colorMask(originalImage, type)
+    return connectedComponentsMethodContinue(originalImage, colorMasked, blur, type)
 
-    processedImage = imageProcessing.ProcessImage.processImage(originalImage, lower, upper)
+#def connectedComponentsMethod(originalImage, blur: int, lower, upper, type: str):
+    #colorMasked = colorMask(originalImage, lower, upper)
+    #return connectedComponentsMethodContinue(originalImage, colorMasked, blur, type)
+
+def connectedComponentsMethodContinue(originalImage: np.ndarray, image: np.ndarray, blur: int, type: str):
+
+    processedImage = imageProcessing.ProcessImage.processImage(image, blur)
 
     num_labels, labels = cv2.connectedComponents(processedImage)
 

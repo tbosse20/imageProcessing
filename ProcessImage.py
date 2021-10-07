@@ -8,25 +8,12 @@ class Blob:
         self.w = w
         self.h = h
 
-def colorMask(img: np.ndarray, lower: tuple, upper: tuple) -> np.ndarray:
-    # Convert to hsv
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    mask = cv2.inRange(hsv, lower, upper)
-
-    # Slice the color
-    imask = mask > 0
-    maskedImg = np.zeros_like(img, np.uint8)
-    maskedImg[imask] = img[imask]
-
-    return maskedImg
-
-def processImage(image, lower: tuple, upper: tuple):
+def processImage(image, blur: int):
 
     # Process image
     # Make a copy of the image
     originalImage = image.copy()
     # Threshold image with color
-    image = colorMask(image, lower, upper)
     # Image to grayscale
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # Convert image to binary
