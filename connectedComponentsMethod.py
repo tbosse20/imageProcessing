@@ -1,11 +1,11 @@
 import cv2
 import numpy as np
+import imageProcessing.ProcessImage
 
-def connectedComponentsMethod(originalImage, processedImage):
+def connectedComponentsMethod(originalImage, blur: int, lower, upper, type: str):
 
-    #gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    processedImage = imageProcessing.ProcessImage.processImage(originalImage, lower, upper)
 
-    #binaryImage = cv2.threshold(gray_image, 127, 255, cv2.THRESH_BINARY)[1]
     num_labels, labels = cv2.connectedComponents(processedImage)
 
     label_hue = np.uint8(179 * labels / np.max(labels))
@@ -25,11 +25,24 @@ def connectedComponentsMethod(originalImage, processedImage):
         x, y = min(nonZeroY), min(nonZeroX)
         w, h = max(nonZeroY) - x, max(nonZeroX) - y
 
-        blobs.append((x, y, w, h))
+        blobs.append(imageProcessing.ProcessImage.Blob(x, y, w, h))
+
+    notFiltered = originalImage.copy()
+    for blob in blobs:
+        notFiltered = cv2.rectangle(notFiltered, (blob.x, blob.y), (blob.x + blob.w, blob.y + blob.h), (0, 0, 255), 1)
+
+    cv2.imshow('Not filtered', notFiltered)
+
+    blobs = imageProcessing.ProcessImage.filterBlobs(blobs, minWidth=0, minHeight=0)
+    #blobs = imageProcessing.ProcessImage.mergeBlobs(blobs, 10)
+    blobs = imageProcessing.ProcessImage.filterBlobs(blobs, minWidth=60, minHeight=60)
 
     for blob in blobs:
-        originalImage = cv2.rectangle(originalImage, (blob[0], blob[1]), (blob[0] + blob[2], blob[1] + blob[3]), (0, 0, 255), 1)
+        originalImage = cv2.rectangle(originalImage, (blob.x, blob.y), (blob.x + blob.w, blob.y + blob.h), (0, 0, 255), 1)
 
     cv2.imshow('ConnectedComponentsMethod', originalImage)
+
+    for blob in blobs:
+        blob.type = type
 
     return blobs

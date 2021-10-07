@@ -1,8 +1,8 @@
-from GrassFireMethod import GrassFireMethod, Area
+from imageProcessing.GrassFireMethod import GrassFireMethod, Area
 import cv2
-from ColorMask import colorMask
+from imageProcessing.ColorMask import colorMask
 import numpy as np
-
+import imageProcessing.ProcessImage
 
 class Blob(Area):
     def __init__(self, grass, x: int, y: int):
@@ -16,6 +16,7 @@ class Blob(Area):
 
     def setThreshold(blobThreshold):
         Blob.blobThreshold = blobThreshold
+
 
 
 class BlobDetection(GrassFireMethod):
@@ -37,28 +38,7 @@ class BlobDetection(GrassFireMethod):
     def getAreas(self) -> list:
         return self.areas
 
-    def mergeBlobs(blobs):
-        blobs = list(set(blobs))
-        for blob1 in list(blobs):
-            for blob2 in list(blobs):
-                if blob1 is not blob2:
-                    if checkOverLap(blob1, blob2):
-                        blob2.x = min(blob1.x, blob2.x)
-                        blob2.w = max(blob1.w, blob2.w)
-                        blob2.y = min(blob1.y, blob2.y)
-                        blob2.h = max(blob1.h, blob2.h)
-                        if blob1 in blobs:
-                            blobs.remove(blob1)
-        return blobs
 
-
-def checkOverLap(obj1, obj2) -> bool:
-    if obj1.x - Blob.blobThreshold < obj2.x + obj2.w:
-        if obj1.x + obj1.w + Blob.blobThreshold > obj2.x:
-            if obj1.y - Blob.blobThreshold < obj2.y + obj2.h:
-                if obj1.h + obj1.y + Blob.blobThreshold > obj2.y:
-                    return True
-    return False
 
 
 def blobDetection(originalFrame: np.ndarray, blurLevel: int, lower: [int], upper: [int], type: str, lowerRes: int) -> [
@@ -90,7 +70,7 @@ def blobDetection(originalFrame: np.ndarray, blurLevel: int, lower: [int], upper
     # Blob detect image
     blobs = BlobDetection(imageProcess, '0').getAreas()
 
-    if 1 < len(blobs): blobs = BlobDetection.mergeBlobs(blobs)
+    if 1 < len(blobs): blobs = imageProcessing.ProcessImage.mergeBlobs(blobs)
 
     # Remove to small blobs
     for blob in list(blobs):
