@@ -43,8 +43,8 @@ def connectedComponentsMethodContinue(originalImage: np.ndarray, image: np.ndarr
     cv2.imshow('Not filtered', notFiltered)
 
     blobs = imageProcessing.ProcessImage.filterBlobs(blobs, minWidth=0, minHeight=0)
+    blobs = imageProcessing.ProcessImage.filterBlobs(blobs, minWidth=50, minHeight=50)
     #blobs = imageProcessing.ProcessImage.mergeBlobs(blobs, 10)
-    blobs = imageProcessing.ProcessImage.filterBlobs(blobs, minWidth=60, minHeight=60)
 
     for blob in blobs:
         originalImage = cv2.rectangle(originalImage, (blob.x, blob.y), (blob.x + blob.w, blob.y + blob.h), (0, 0, 255), 1)

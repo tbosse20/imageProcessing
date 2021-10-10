@@ -14,8 +14,13 @@ def processImage(image):
     # Make a copy of the image
     originalImage = image.copy()
     # Threshold image with color
+
     # Image to grayscale
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Blur image
+    image = cv2.blur(image, (2, 2))
+
     # Convert image to binary
     """
     (thresh, image) = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)

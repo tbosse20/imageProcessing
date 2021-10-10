@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 def getColorThreshold(img):
 
     # Show image for good measures
-    cv2.imshow('Image', img)
+    cv2.imshow('Filter image', img)
 
     # Make mask to ignore fully white #
     #mask = img.copy()
@@ -30,14 +30,22 @@ def getColorThreshold(img):
         # Get histogram from each channel
         hist.append(cv2.calcHist([v], [0], mask, [256], [0, 256]))
 
+    """ Show histogram    
+    rgb = ['r', 'g', 'b']
+    hsv = ['h', 's', 'v']
+    for v, label in enumerate(hist):
+        plt.plot(hist[v], color=rgb[v], label=hsv[v])
+    plt.legend()
+    plt.show()
+        """
 
     # Find upper and lower #
     lower, upper = [], []
     for x, values in enumerate(hist):
         # Flatten all values into one list
         flat_list = np.array([int(i) for i in values])
-        # Get values above mark threshold (100 set, MISSING: needs to be coded)
-        thresholdMarksValues = np.where(flat_list > 100)
+        # Get values above mark threshold (10 set, MISSING: needs to be coded)
+        thresholdMarksValues = np.where(flat_list > 10)
         # Get minimum value of mark threshold
         minValue = min(thresholdMarksValues[0])
         lower.append(minValue)
@@ -49,14 +57,6 @@ def getColorThreshold(img):
     print(lower, upper)
 
 
-    """ Show histogram     
-        """
-    rgb = ['r', 'g', 'b']
-    hsv = ['h', 's', 'v']
-    for v, label in enumerate(hist):
-        plt.plot(hist[v], color=rgb[v], label=hsv[v])
-    plt.legend()
-    plt.show()
 
     return [lower, upper]
 
