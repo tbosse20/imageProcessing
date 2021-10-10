@@ -5,6 +5,7 @@ class Area(ABC):
     def __init__(self): pass
 
 
+# Grass fire algorithm. "Burn" an "area"
 class GrassFireMethod(ABC):
     def __init__(self, matrix, area: Area, fireMethod: str):
         self.matrix = matrix
@@ -13,14 +14,17 @@ class GrassFireMethod(ABC):
 
         self.grassFireMethod(area)
 
-    @abstractmethod
-    def handle(self, area, grass, x, y):
-        pass  # Handling single grass and area
-
+    # Condition for the grass fire to handle
     @abstractmethod
     def condition(self, area, grass) -> bool:
         pass  # Condition for grass to catch on fire
 
+    # Handling the grass when burning it
+    @abstractmethod
+    def handle(self, area, grass, x, y):
+        pass  # Handling single grass and area
+
+    # Grass fire alg. finding each square next to the current
     def grassFire(self, grass, y, x, area, row):
         # Handle the area and single grass. Method made in subclass
         area, grass = self.handle(area, grass, x, y)
@@ -38,6 +42,7 @@ class GrassFireMethod(ABC):
                             # Continue iterating
                             self.grassFire(grass, y + j, x + i, area, row)
 
+    # Start of the grass fire alg. (Ignite)
     def grassFireMethod(self, Area: Area):
         for y, row in enumerate(self.matrix):
             for x, grass in enumerate(row):

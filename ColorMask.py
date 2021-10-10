@@ -3,16 +3,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-
+# MISSING: CAN FIND THRESHOLD BUT NOT WITH MULTIPLE BUMPS
 def getColorThreshold(img):
 
     # Show image for good measures
     cv2.imshow('Image', img)
 
     # Make mask to ignore fully white #
-    mask = img.copy()
+    #mask = img.copy()
     # Use all pixels not including 255 values
-    mask = np.all(img[:, :] != 255, 2)
+    mask = np.all((img[:, :] < 255) & (img[:, :] > 0), 2)
     # Convert bool to int
     mask = mask.astype(np.uint8, copy=False)
     # Change 1's to 255
@@ -30,64 +30,33 @@ def getColorThreshold(img):
         # Get histogram from each channel
         hist.append(cv2.calcHist([v], [0], mask, [256], [0, 256]))
 
+
     # Find upper and lower #
     lower, upper = [], []
     for x, values in enumerate(hist):
         # Flatten all values into one list
         flat_list = np.array([int(i) for i in values])
-        # Get values above mark threshold
-        thresholdMarksValues = np.where(flat_list > 300)
+        # Get values above mark threshold (100 set, MISSING: needs to be coded)
+        thresholdMarksValues = np.where(flat_list > 100)
         # Get minimum value of mark threshold
         minValue = min(thresholdMarksValues[0])
+        lower.append(minValue)
         # Get maximum value of mark threshold
         maxValue = max(thresholdMarksValues[0])
-        lower.append(minValue)
         upper.append(maxValue)
-
-        """
-        # Get the index of the two lowest values # MISSING: NOT FINDING ANYTHING
-        minIndex = np.where(flat_list == minValue)[0]
-        maxIndex = np.where(flat_list == maxValue)[0]
-        print(minIndex, maxIndex)
-
-        #print(flat_list)
-        gradient = np.gradient(flat_list)
-        gradient = [int(i) for i in gradient]
-        #print(gradient)
-        # Get all values with minimum value above given threshold
-        #cropped = [i for i in flat_list if i > 5]
-        #print(cropped)
-        #minIndex = np.where((abs(gradient) > 20) & (abs(gradient) < 50))
-        #minIndex = gradient[(np.where((gradient >= 20) & (gradient <= 30)))]
-        #print(minIndex)
-
-        # Get steppness
-        """
-
-        """
-        # Get the index of the minimum value
-        minIndex = min(thresholdMarksIndex)
-        # Append index to lower threshold
-        lower.append(minIndex)
-
-        # Get the index of the maximum value
-        maxIndex = max(thresholdMarksIndex)
-        # Append index to upper threshold
-        upper.append(maxIndex)
-        """
-
     lower = np.array(lower)
     upper = np.array(upper)
     print(lower, upper)
 
-    """ Show histogram 
+
+    """ Show histogram     
+        """
     rgb = ['r', 'g', 'b']
     hsv = ['h', 's', 'v']
     for v, label in enumerate(hist):
         plt.plot(hist[v], color=rgb[v], label=hsv[v])
     plt.legend()
     plt.show()
-    """
 
     return [lower, upper]
 
@@ -97,17 +66,18 @@ def colorMask(originalImage: np.ndarray, type: str) -> np.ndarray:
         path = '../' + path
 
     maskImage = cv2.imread(path)
-    thresholdMark = getColorThreshold(maskImage)
-    #return colorMask(img, threshold[0], threshold[1])
     cv2.imshow('Original image', originalImage)
 
-#def colorMask(img: np.ndarray, lower: tuple, upper: tuple) -> np.ndarray:
+    thresholdMark = getColorThreshold(maskImage)
+
+    return colorMaskManuel(originalImage, thresholdMark[0], thresholdMark[1])
+
+def colorMaskManuel(originalImage: np.ndarray, lower: tuple, upper: tuple) -> np.ndarray:
 
     # Convert to hsv
     hsv = cv2.cvtColor(originalImage, cv2.COLOR_BGR2HSV)
-    mask = cv2.inRange(hsv, thresholdMark[0], thresholdMark[1])
-
-    cv2.imshow('Mask ' + type, mask)
+    mask = cv2.inRange(hsv, lower, upper)
+    cv2.imshow('Mask', mask)
 
     # Slice the color
     imask = mask > 0

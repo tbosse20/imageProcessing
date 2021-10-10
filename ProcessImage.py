@@ -8,7 +8,7 @@ class Blob:
         self.w = w
         self.h = h
 
-def processImage(image, blur: int):
+def processImage(image):
 
     # Process image
     # Make a copy of the image
