@@ -6,9 +6,9 @@ from imageProcessing.ColorMask import *
 def connectedComponentsMethod(originalImage, type: str):
 
     image = originalImage
-    image = cv2.GaussianBlur(originalImage, (7, 7), 0)
-    edges = cv2.Canny(image=image, threshold1=0, threshold2=200)  # Canny Edge Detection
-    cv2.imshow('Edges no', edges)
+    #image = cv2.GaussianBlur(originalImage, (7, 7), 0)
+    #edges = cv2.Canny(image=image, threshold1=0, threshold2=200)  # Canny Edge Detection
+    #cv2.imshow('Edges no', edges)
 
     colorMasked = colorMask(originalImage, type)
     return connectedComponentsMethodContinue(originalImage, colorMasked, type)
@@ -42,20 +42,20 @@ def connectedComponentsMethodContinue(originalImage: np.ndarray, image: np.ndarr
 
         blobs.append(imageProcessing.ProcessImage.Blob(x, y, w, h))
 
-    notFiltered = originalImage.copy()
-    for blob in blobs:
-        notFiltered = cv2.rectangle(notFiltered, (blob.x, blob.y), (blob.x + blob.w, blob.y + blob.h), (0, 0, 255), 1)
+    #notFiltered = originalImage.copy()
+    #for blob in blobs:
+        #notFiltered = cv2.rectangle(notFiltered, (blob.x, blob.y), (blob.x + blob.w, blob.y + blob.h), (0, 0, 255), 1)
 
-    cv2.imshow('Not filtered', notFiltered)
+    #cv2.imshow('Not filtered', notFiltered)
 
     blobs = imageProcessing.ProcessImage.filterBlobs(blobs, minWidth=0, minHeight=0)
-    blobs = imageProcessing.ProcessImage.filterBlobs(blobs, minWidth=50, minHeight=50)
+    blobs = imageProcessing.ProcessImage.filterBlobs(blobs, minWidth=30, minHeight=30)
     #blobs = imageProcessing.ProcessImage.mergeBlobs(blobs, 10)
 
     for i, blob in enumerate(blobs):
         blob.id = i  # Set id
         blob.type = type # Set the given type of the square
-        originalImage = cv2.rectangle(originalImage, (blob.x, blob.y), (blob.x + blob.w, blob.y + blob.h), (0, 0, 255), 1)
+        #originalImage = cv2.rectangle(originalImage, (blob.x, blob.y), (blob.x + blob.w, blob.y + blob.h), (0, 0, 255), 1)
 
     cv2.imshow('ConnectedComponentsMethod', originalImage)
 

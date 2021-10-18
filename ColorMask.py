@@ -40,7 +40,7 @@ def getColorThreshold(img):
         upper.append(max(thresholdMarksValues[0]))  # Get maximum value of mark threshold
     lower = np.array(lower)
     upper = np.array(upper)
-    print(lower, upper)
+    #print(lower, upper)
 
     return [lower, upper]
 
@@ -51,6 +51,7 @@ def colorMask(originalImage: np.ndarray, type: str) -> np.ndarray:
         path = '../' + path
 
     maskImage = cv2.imread(path)
+    #print(originalImage)
     cv2.imshow('Original image', originalImage)
 
     thresholdMark = getColorThreshold(maskImage)
