@@ -18,11 +18,15 @@ def processImage(image):
     # Image to grayscale
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
+    #image = cv2.GaussianBlur(image, (3, 3), 0)
+    edges = cv2.Canny(image=image, threshold1=100, threshold2=200)  # Canny Edge Detection
+    cv2.imshow('Edges', edges)
+
     # Blur image
     image = cv2.blur(image, (2, 2))
 
-    # Convert image to binary
     """
+    # Convert image to binary
     (thresh, image) = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     # Invert image
     image = cv2.bitwise_not(image)
