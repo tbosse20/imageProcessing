@@ -5,14 +5,14 @@ import matplotlib.pyplot as plt
 
 # MISSING: CAN FIND THRESHOLD BUT NOT WITH MULTIPLE BUMPS
 def getColorThreshold(img):
-    cv2.imshow('Filter image', img)  # Show image for good measures
+    #cv2.imshow('Filter image', img)  # Show image for good measures
 
     # Make mask to ignore fully white #
     # mask = img.copy()
     mask = np.all((img[:, :] < 255) & (img[:, :] > 0), 2)  # Use all pixels not including 255 values
     mask = mask.astype(np.uint8, copy=False)  # Convert bool to int
     mask[mask == 1] = 255  # Change 1's to 255
-    cv2.imshow('Mask', mask)  # Show mask for good measures
+    #cv2.imshow('Mask', mask)  # Show mask for good measures
 
     # Get the histogram for each HSV channel #
     hist = []
@@ -51,8 +51,7 @@ def colorMask(originalImage: np.ndarray, type: str) -> np.ndarray:
         path = '../' + path
 
     maskImage = cv2.imread(path)
-    #print(originalImage)
-    cv2.imshow('Original image', originalImage)
+    #cv2.imshow('Original image', originalImage)
 
     thresholdMark = getColorThreshold(maskImage)
 
@@ -63,14 +62,14 @@ def colorMaskManuel(originalImage: np.ndarray, lower: tuple, upper: tuple) -> np
     # Convert to hsv
     hsv = cv2.cvtColor(originalImage, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, lower, upper)
-    cv2.imshow('Mask', mask)
+    #cv2.imshow('Mask', mask)
 
     # Slice the color
     imask = mask > 0
     maskedImg = np.zeros_like(originalImage, np.uint8)
     maskedImg[imask] = originalImage[imask]
 
-    cv2.imshow('Final filtered image', maskedImg)
+    #cv2.imshow('Final filtered image', maskedImg)
 
     return maskedImg
 

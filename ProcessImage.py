@@ -19,8 +19,8 @@ def processImage(image):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     #image = cv2.GaussianBlur(image, (3, 3), 0)
-    edges = cv2.Canny(image=image, threshold1=100, threshold2=200)  # Canny Edge Detection
-    cv2.imshow('Edges', edges)
+    #edges = cv2.Canny(image=image, threshold1=100, threshold2=200)  # Canny Edge Detection
+    #cv2.imshow('Edges', edges)
 
     # Blur image
     image = cv2.blur(image, (2, 2))
@@ -51,7 +51,7 @@ def processImage(image):
     """
 
     # Show processed image
-    cv2.imshow('Processed image', image)
+    #cv2.imshow('Processed image', image)
 
     return image
 

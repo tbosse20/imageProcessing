@@ -57,7 +57,7 @@ def connectedComponentsMethodContinue(originalImage: np.ndarray, image: np.ndarr
         blob.type = type # Set the given type of the square
         #originalImage = cv2.rectangle(originalImage, (blob.x, blob.y), (blob.x + blob.w, blob.y + blob.h), (0, 0, 255), 1)
 
-    cv2.imshow('ConnectedComponentsMethod', originalImage)
+    #cv2.imshow('ConnectedComponentsMethod', originalImage)
 
 
     return blobs
